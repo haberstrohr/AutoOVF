@@ -6,6 +6,7 @@ Foreach ($Application in $Applications) {
     Describe "$Application Environment" {
         Foreach ($node in $OVFConfig.$Application.Nodes) {
             Context "Verifying $node status" {
+                $Session = New-PSSession -ComputerName $node
                 Foreach ($TestType in $OVFConfig.$Application.TestType.Keys) {
                     if ($TestType -eq "Be") {
                         Foreach ($desired in $OVFConfig.$Application.TestType.$TestType.Keys) {
@@ -17,7 +18,8 @@ Foreach ($Application in $Applications) {
                                             $Service = $ServicesHash.Item($_)
                                             $SvcDisplayName = $_
                                             It "The $SvcDisplayName ($Service) should $TestType $desired" {
-                                                $desired | should $TestType $desired # Need to update with actual commands
+                                                (Invoke-Command -Session $Session {Get-Service -Name $Service}).status | 
+                                                    Should $TestType $desired
                                             }
                                         } # End foreach $servicename
                                     } # End if $runningkey -eq Services   
@@ -63,7 +65,8 @@ Foreach ($Application in $Applications) {
                                             $Service = $ServicesHash.Item($_)
                                             $SvcDisplayName = $_
                                             It "The $SvcDisplayName ($Service) should $TestType $desired" {
-                                                $desired | should $TestType $desired # Need to update with actual commands
+                                                (Invoke-Command -Session $Session {Get-Service -Name $Service}).status | 
+                                                    Should $TestType $desired
                                             }
                                         } # End foreach $servicename
                                     } # End if $runningkey -eq Services   
@@ -110,6 +113,7 @@ Foreach ($Application in $Applications) {
                     if ($TestType -eq "BeNullOrEmpty") {
                     } # End if $TestType -eq BeNullOrEmpty
                 } # End Foreach $TestType
+                Remove-PSSession -Session $Session
             } # End Context block
         } # End Foreach $node
     } # End Describe Block
