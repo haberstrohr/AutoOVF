@@ -18,7 +18,7 @@ Foreach ($Application in $Applications) {
                                             $Service = $ServicesHash.Item($_)
                                             $SvcDisplayName = $_
                                             It "The $SvcDisplayName ($Service) should $TestType $desired" {
-                                                (Invoke-Command -Session $Session {Get-Service -Name $Service}).status | 
+                                                (Invoke-Command -Session $Session {Get-Service -Name $using:Service}).status | 
                                                     Should $TestType $desired
                                             }
                                         } # End foreach $servicename
@@ -65,7 +65,7 @@ Foreach ($Application in $Applications) {
                                             $Service = $ServicesHash.Item($_)
                                             $SvcDisplayName = $_
                                             It "The $SvcDisplayName ($Service) should $TestType $desired" {
-                                                (Invoke-Command -Session $Session {Get-Service -Name $Service}).status | 
+                                                (Invoke-Command -Session $Session {Get-Service -Name $using:Service}).status | 
                                                     Should $TestType $desired
                                             }
                                         } # End foreach $servicename
